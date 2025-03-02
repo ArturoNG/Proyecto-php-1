@@ -1,43 +1,40 @@
 <?php
-$movies = array(
-    array(
-        "title" => "Iron Man 3",
-        "release_year" => 2013,
-        "director" => "Shane Black",
-        "description" => "el descarado pero brillante empresario Tony Stark/Iron Man se enfrentará a un enemigo cuyo poder no conoce límites. Cuando Stark comprende que su enemigo ha destruido su universo personal, se embarca en una angustiosa búsqueda para encontrar a los responsables."
-    ),
-    array(
-        "title" => "Los Vengadores",
-        "release_year" => 2012,
-        "director" => "Joss Whedon",
-        "description" => "Los héroes más poderosos de la Tierra deben unirse y aprender a luchar en equipo si quieren evitar que el travieso Loki y su ejército alienígena esclavicen a la humanidad."
-    ),
-    array(
-        "title" => "Guardianes de la Galaxia",
-        "release_year" => 2014,
-        "director" => "James Gunn",
-        "description" => "Un grupo de criminales intergalácticos deben unirse para detener a un guerrero fanático con planes para purgar el universo."
-    )
-);
+
+const API_URL = "https://whenisthenextmcufilm.com/api";
+
+# Inicializar una nueva sesión de cURL; ch = cURL handle
+$ch = curl_init(API_URL); 
+
+// Indicar que queremos recibir el resultado de la petición y no mostrarla en pantalla 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+//Ejecutar la petición y guardamos el resultado
+$result = curl_exec($ch);
+$data = json_decode($result, true);
+curl_close($ch);
 
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Aplicación de Películas de Marvel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>La próxima película de Marvel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Lista de Películas de Marvel</h1>
-    <ul>
-    <?php foreach($movies as $movie): ?>
-        <li>
-            <h2><?php echo $movie["title"]; ?></h2>
-            <p><strong>Año de lanzamiento:</strong> <?php echo $movie["release_year"]; ?></p>
-            <p><strong>Director:</strong> <?php echo $movie["director"]; ?></p>
-            <p><strong>Descripción:</strong> <?php echo $movie["description"]; ?></p>
-        </li>
-    <?php endforeach; ?>
-    </ul>
+<body class="bg-body-tertiary"> <div class="container mt-5">
+        <div class="row justify-content-center"> <div class="col-md-8"> <div class="row align-items-center"> <div class="col-md-4 text-center"> <img src="<?= $data["poster_url"]; ?>" class="img-fluid rounded" alt="Poster de <?= $data["title"]; ?>">
+                    </div>
+                    <div class="col-md-8">
+                        <h3 class="text-center text-md-start"><?= $data["title"]; ?> se estrena en <?= $data["days_until"]; ?> días</h3>
+                        <p class="text-center text-md-start">Fecha de estreno: <?= $data["release_date"]; ?></p>
+                        <p class="text-center text-md-start">La siguiente es: <?= $data["following_production"]["title"]; ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
